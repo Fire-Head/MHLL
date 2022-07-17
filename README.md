@@ -1,5 +1,5 @@
 # MHLL
-Manhunt Language Loader is a plugin that gives you an ability to add extra languages for you game without replacing the default ones.
+Manhunt Language Loader is a plugin that gives you an ability to add extra languages for your game without replacing the default ones.
 
 # Requirements
 * UAL (https://github.com/ThirteenAG/Ultimate-ASI-Loader)
