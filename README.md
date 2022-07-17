@@ -110,7 +110,7 @@ UseWholeAsciiTable =
 ; The game uses it to set default game language to your system language when "\Manhunt User Files\SaveGames\Settings.dat" does not exist(e.g. before first launch).
 ; Examples:
 ;	WindowsLangID = 0x0b
-;		In this case LL will set your language as default if your system language is LANG_CZECH and "Settings.dat" file is missing.
+;		In this case LL will set your language as default if your system language is LANG_FINNISH and "Settings.dat" file is missing.
 ;
 ;	WindowsLangID =
 ;		In this case LL will ignore this feature for your language.
