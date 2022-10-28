@@ -120,6 +120,7 @@ public:
 
 class CFEP_LanguageEx //: public CBasePage
 {
+	static const int MAX_PAGEITEMS = 10;
 public:
 	bool Update();
 	void Draw();

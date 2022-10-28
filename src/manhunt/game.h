@@ -288,6 +288,11 @@ public:
 	{
 		((void (__cdecl *)())0x5F6D50)();
 	}
+	
+	static void Print8(char *text, float x, float y, float sizex, float sizey, float unk, long font)
+	{
+		((void (__cdecl *)(char *, float, float, float, float, float, long))0x5E55E0)(text, x, y, sizex, sizey, unk, font);
+	}
 };
 
 class CFrontendMenu

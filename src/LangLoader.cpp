@@ -1,5 +1,6 @@
 #include "LangLoader.h"
 #include <Windows.h>
+#include <math.h>
 
 
 #define IS_STANDARDLANG(x) (((x) >= LANGUAGE_FIRST && (x) <= LANGUAGE_LAST))
@@ -382,16 +383,20 @@ void CLanguageLoader::DestroyTxd()
 }
 
 RwTexture *CLanguageLoader::FindFontTexture(RwTexDictionary *dict, const RwChar *name)
-{
+{	
 	if ( !IsStandardLanguage() )
 	{
 		if ( Language() )
 		{
 			if ( Language()->txd )
-				return RwTexDictionaryFindNamedTexture(Language()->txd, name);
+			{
+				RwTexture *t = RwTexDictionaryFindNamedTexture(Language()->txd, name);
+				if ( t )
+					return t;
+			}
 		}
 	}
-
+	
 	return RwTexDictionaryFindNamedTexture(dict, name);
 }
 
@@ -570,9 +575,11 @@ bool CFEP_LanguageEx::Update()
 		if ( ++option >= CLanguageLoader::GetLanguageNumber() )
 			option = 0;
 	}
+	
+	int pageoff = (int)floor(double(option) / MAX_PAGEITEMS) * MAX_PAGEITEMS;
 
 	if ( CFrontendMenu::InputMouse() )
-		option = CFrontendMenu::GetMouseOption();
+		option = CFrontendMenu::GetMouseOption() + pageoff;
 
 	if ( CFrontendMenu::InputBack() || CFrontendMenu::InputMouseBack() )
 		CFrontendMenu::SetMenu(MENU_SETTINGS);
@@ -609,7 +616,18 @@ void CFEP_LanguageEx::Draw()
 	float h = CFrontendMenu::fOptionScaleY;
 	float m = CFrontendMenu::fOptionMargin;
 
-	for ( int i = 0; i < CLanguageLoader::GetLanguageNumber(); i++ )
+	int curpage = (int)floor(double(option) / MAX_PAGEITEMS);
+	int pagecnt = (int)ceil(double(CLanguageLoader::GetLanguageNumber()) / MAX_PAGEITEMS);
+	
+	if ( curpage > 0 )
+		CFrontend::Print8("~up~",   x, y-m,                         1.25f, 1.25f, 0.0, 1);
+	if ( pagecnt > 1 && curpage < pagecnt-1 )
+		CFrontend::Print8("~down~", x, y-m + m*MAX_PAGEITEMS + m/3, 1.25f, 1.25f, 0.0, 1);
+	
+	int first = curpage * MAX_PAGEITEMS;
+	int last  = Min(first + MAX_PAGEITEMS, CLanguageLoader::GetLanguageNumber());
+	
+	for ( int i = first; i < last; i++ )
 	{
 		CLanguageLoader::SetLocalizationByMenuId(i);
 		wchar_t *text = CLanguageLoader::GetLanguageNameByMenuId(i);
