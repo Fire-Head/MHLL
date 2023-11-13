@@ -19,12 +19,16 @@ RwTexDictionary *&CFrontend::ms_tex = *(RwTexDictionary **)0x7D366C;
 CFrontend::Font &CFrontend::ms_font = *(CFrontend::Font *)0x7D2B7C;
 
 CFrontendMenu::menuLanguageCTRL &CFrontendMenu::ms_menuLanguageCTRL = *(CFrontendMenu::menuLanguageCTRL*)0x7C87B4;
+CFrontendMenu::menuMouse &CFrontendMenu::Mouse = *(CFrontendMenu::menuMouse*)0x7C8F70;
 float &CFrontendMenu::fOptionX = *(float*)0x7C8718;
 float &CFrontendMenu::fOptionY = *(float*)0x7C871C;
 float &CFrontendMenu::fOptionScaleX = *(float*)0x7C8720;
 float &CFrontendMenu::fOptionScaleY = *(float*)0x7C8724;
 float &CFrontendMenu::fOptionMargin = *(float*)0x7C8728;
+float &CFrontendMenu::fSelectionBoxScaleY = *(float*)0x7C8734;
+int  &CFrontendMenu::BlinkVar = *(int*)0x7C8E44;
 RwTexDictionary *&CFrontendMenu::m_pTexDictCurrent = *(RwTexDictionary **)0x7C8704;
+int &CFrontendMenu::m_menuCurrent = *(int*)0x7C86F8;
 int &CFrontendMenu::m_menuLastParent = *(int*)0x7C8700;
 
 

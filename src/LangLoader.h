@@ -56,7 +56,7 @@ public:
 
 	static char *UnicodeToAscii(wchar_t *src);
 	static wchar_t *AsciiNToUnicode(const char *src, int len);
-	static void UnicodeFromAscii(wchar_t *dst, const char *src);
+	static void Str8ToStr16(wchar_t *dst, const char *src);
 
 	static bool LoadGlobal(CText *text, char *path);
 	static bool LoadLevel(CText *text, char *path);
@@ -121,7 +121,14 @@ public:
 class CFEP_LanguageEx //: public CBasePage
 {
 	static const int MAX_PAGEITEMS = 10;
+	static int m_menuLast;
+	static int m_currentPage;
+	static int m_maxPages;
+	static bool m_nextPage;
+	static bool m_prevPage;
 public:
+	void Ctor();
+	void Dtor();
 	bool Update();
 	void Draw();
 };

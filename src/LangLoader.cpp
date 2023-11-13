@@ -289,7 +289,7 @@ wchar_t *CLanguageLoader::AsciiNToUnicode(const char *src, int len)
 	return CUniCodeUtils::ms_strLastConvertedUniCode;
 }
 
-void CLanguageLoader::UnicodeFromAscii(wchar_t *dst, const char *src)
+void CLanguageLoader::Str8ToStr16(wchar_t *dst, const char *src)
 {
 	int len = strlen(src);
 	for ( int i = 0; i < len; i++ )
@@ -560,43 +560,103 @@ bool CLanguageLoader::LoadLevel(CText *text, char *path)
 	return text->Load(path);
 }
 
+int CFEP_LanguageEx::m_menuLast = -1;
+int CFEP_LanguageEx::m_currentPage = 0;
+int CFEP_LanguageEx::m_maxPages = 0;
+bool CFEP_LanguageEx::m_nextPage = false;
+bool CFEP_LanguageEx::m_prevPage = false;
+
+void CFEP_LanguageEx::Ctor()
+{
+	m_menuLast = CFrontendMenu::m_menuCurrent;
+	m_maxPages = (int)ceil(double(CLanguageLoader::GetLanguageNumber()) / MAX_PAGEITEMS);
+}
+
+void CFEP_LanguageEx::Dtor()
+{
+	int &option = CFrontendMenu::ms_menuLanguageCTRL.option;
+	
+	if ( m_menuLast != CFrontendMenu::m_menuCurrent )
+	{
+		m_currentPage = 0;
+		option = 0;
+	}
+}
+
 bool CFEP_LanguageEx::Update()
 {
 	int &option = CFrontendMenu::ms_menuLanguageCTRL.option;
-
-	if ( CFrontendMenu::InputUp() )
+	
+	if ( m_nextPage )
 	{
-		if ( --option < 0 )
-			option = CLanguageLoader::GetLanguageNumber() - 1;
-	}
-
-	if ( CFrontendMenu::InputDown() )
-	{
-		if ( ++option >= CLanguageLoader::GetLanguageNumber() )
-			option = 0;
+		if ( CFrontendMenu::Mouse.bLMBOnce )
+		{
+			if ( ++m_currentPage >= m_maxPages )
+				m_currentPage = m_maxPages - 1;
+		}
+		
+		m_nextPage = false;
 	}
 	
-	int pageoff = (int)floor(double(option) / MAX_PAGEITEMS) * MAX_PAGEITEMS;
+	if ( m_prevPage )
+	{
+		if ( CFrontendMenu::Mouse.bLMBOnce )
+		{
+			if ( --m_currentPage < 0 )
+				m_currentPage = 0;
+		}
+		
+		m_prevPage = false;
+	}
+	
+	if ( CFrontendMenu::InputUp() )
+	{
+		{
+			int first = m_currentPage * MAX_PAGEITEMS;
+			int last  = Min(first + MAX_PAGEITEMS, CLanguageLoader::GetLanguageNumber()) - 1;
+			if ( option < first || option > last )
+				option = last + 1;
+		}
+		
+		if ( --option < 0 )
+			option = 0;
+				
+		m_currentPage = ((int)ceil(float(option + 1) / float(MAX_PAGEITEMS))) - 1;
+	}
+	
+	if ( CFrontendMenu::InputDown() )
+	{
+		{
+			int first = m_currentPage * MAX_PAGEITEMS;
+			int last  = Min(first + MAX_PAGEITEMS, CLanguageLoader::GetLanguageNumber()) - 1;
+			if ( option < first || option > last )
+				option = first - 1;
+		}
+		
+		if ( ++option >= CLanguageLoader::GetLanguageNumber() )
+			option = CLanguageLoader::GetLanguageNumber() - 1;
+		
+		m_currentPage = ((int)ceil(float(option + 1) / float(MAX_PAGEITEMS))) - 1;
+	}
+	
+	int pageoff = m_currentPage * MAX_PAGEITEMS;
 
 	if ( CFrontendMenu::InputMouse() )
 		option = CFrontendMenu::GetMouseOption() + pageoff;
 
-	if ( CFrontendMenu::InputBack() || CFrontendMenu::InputMouseBack() )
+	if ( CFrontendMenu::InputBack() || CFrontendMenu::InputPrintInfoButton1() )
 		CFrontendMenu::SetMenu(MENU_SETTINGS);
 
 	if ( CFrontendMenu::InputSelect() )
 	{
-		for ( int i = 0; i < CLanguageLoader::GetLanguageNumber(); i++ )
+		if ( option >= 0 && option < CLanguageLoader::GetLanguageNumber() )
 		{
-			if ( option == i )
-			{
-				g_mhGlobalData.SetLanguage((eLanguage)CLanguageLoader::GetLanguageIdByMenuId(i), TRUE);
+			g_mhGlobalData.SetLanguage((eLanguage)CLanguageLoader::GetLanguageIdByMenuId(option), TRUE);
 
-				if ( CFrontendMenu::m_menuLastParent == MENU_SETTINGS )
-					CFrontendMenu::SetMenu(MENU_SETTINGS);
-				else
-					CFrontendMenu::SetMenu(MENU_EMPTY_2);
-			}
+			if ( CFrontendMenu::m_menuLastParent == MENU_SETTINGS )
+				CFrontendMenu::SetMenu(MENU_SETTINGS);
+			else
+				CFrontendMenu::SetMenu(MENU_EMPTY_2);
 		}
 	}
 
@@ -615,16 +675,58 @@ void CFEP_LanguageEx::Draw()
 	float w = CFrontendMenu::fOptionScaleX;
 	float h = CFrontendMenu::fOptionScaleY;
 	float m = CFrontendMenu::fOptionMargin;
+	
+	float yoff = 0.0075f*1.5f;
+	
+	if ( m_currentPage > 0 )
+	{
+		float ah = CFrontend::GetFontHeight(1, 1.25f);
+		float aw = CFrontend::GetTextWidth8("~up~", 1.25f, 1);
+		float ay = y-ah*0.723f-yoff;
+		float ax = x;
+		
+		if ( CFrontendMenu::Mouse.fPointerX >= ax && CFrontendMenu::Mouse.fPointerX < ax+aw
+		  && CFrontendMenu::Mouse.fPointerY >= ay && CFrontendMenu::Mouse.fPointerY < ay+ah)
+			m_prevPage = true;
+		
+		if ( m_prevPage )
+		{
+			if ( CFrontendMenu::BlinkVar != 0 )
+				CFrontendMenu::SetPrintColor(255, 255, 255, 255);
+			else
+				CFrontendMenu::SetPrintColor(200, 200, 200, 255);
+		}
+		else
+			CFrontendMenu::SetColorGray();
+		
+		CFrontend::Print8("~up~",   ax, ay, 1.25f, 1.25f, 0.0, 1);
+	}
+	if ( m_maxPages > 1 && m_currentPage < m_maxPages-1 )
+	{
+		float bh = CFrontend::GetFontHeight(2, h) + CFrontendMenu::fSelectionBoxScaleY - 0.002f;
+		float ah = CFrontend::GetFontHeight(1, 1.25f);
+		float aw = CFrontend::GetTextWidth8("~down~", 1.25f, 1);
+		float ay = y + m*(MAX_PAGEITEMS-1)+bh-ah*0.384f+yoff;
+		float ax = x;
+		
+		if ( CFrontendMenu::Mouse.fPointerX >= ax && CFrontendMenu::Mouse.fPointerX < ax+aw
+		  && CFrontendMenu::Mouse.fPointerY >= ay && CFrontendMenu::Mouse.fPointerY < ay+ah )
+			m_nextPage = true;
+		
+		if ( m_nextPage )
+		{
+			if ( CFrontendMenu::BlinkVar != 0 )
+				CFrontendMenu::SetPrintColor(255, 255, 255, 255);
+			else
+				CFrontendMenu::SetPrintColor(200, 200, 200, 255);
+		}
+		else
+			CFrontendMenu::SetColorGray();
 
-	int curpage = (int)floor(double(option) / MAX_PAGEITEMS);
-	int pagecnt = (int)ceil(double(CLanguageLoader::GetLanguageNumber()) / MAX_PAGEITEMS);
+		CFrontend::Print8("~down~", ax, ay, 1.25f, 1.25f, 0.0, 1);
+	}
 	
-	if ( curpage > 0 )
-		CFrontend::Print8("~up~",   x, y-m,                         1.25f, 1.25f, 0.0, 1);
-	if ( pagecnt > 1 && curpage < pagecnt-1 )
-		CFrontend::Print8("~down~", x, y-m + m*MAX_PAGEITEMS + m/3, 1.25f, 1.25f, 0.0, 1);
-	
-	int first = curpage * MAX_PAGEITEMS;
+	int first = m_currentPage * MAX_PAGEITEMS;
 	int last  = Min(first + MAX_PAGEITEMS, CLanguageLoader::GetLanguageNumber());
 	
 	for ( int i = first; i < last; i++ )

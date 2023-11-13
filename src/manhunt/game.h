@@ -293,11 +293,22 @@ public:
 	{
 		((void (__cdecl *)(char *, float, float, float, float, float, long))0x5E55E0)(text, x, y, sizex, sizey, unk, font);
 	}
+	
+	static float GetTextWidth8(char *text, float sizex, long font)
+	{
+		return ((float (__cdecl *)(const char *, float, long))0x5E5670)(text, sizex, font);
+	}
+	
+	static float GetFontHeight(long font, float sizey)
+	{
+		return ((float (__cdecl *)(long, float))0x5FBFC0)(font, sizey);
+	}
 };
 
 class CFrontendMenu
 {
 public:
+	static int &m_menuCurrent;
 	static int &m_menuLastParent;
 	static RwTexDictionary *&m_pTexDictCurrent;
 	static float &fOptionX;
@@ -305,13 +316,50 @@ public:
 	static float &fOptionScaleX;
 	static float &fOptionScaleY;
 	static float &fOptionMargin;
+	static float &fSelectionBoxScaleY;
+	static int   &BlinkVar;
 
 	struct menuLanguageCTRL
 	{
 		int option;
 	};
+	
+	struct menuMouse
+	{
+		int field_0;
+		int bSaveGameSel;
+		int bDBoxSelectOnClickInput;
+		int nControlsSliderID;
+		int bOption;
+		int bMouseUpdated;
+		int bSliderMinusSel;
+		int bSliderPlusSel;
+		int bLeftOnClickInput;
+		int bRightOnClickInput;
+		int bPrintfInfo;
+		int bPrintInfoButton1Input;
+		int bPrintInfoButton2Input;
+		int nLastOptionSel;
+		int nLastSubOptionSel;
+		int nOptionSel;
+		int nSubOptionSel;
+		int bOptionSel;
+		int nLastIconSel;
+		int nIconSel;
+		float fPointerX;
+		float fPointerY;
+		float fPointerSizeX;
+		float fPointerSizeY;
+		float fX;
+		float fY;
+		int bLMB;
+		int bMMB;
+		int bRMB;
+		int bLMBOnce;
+	};
 
 	static menuLanguageCTRL &ms_menuLanguageCTRL;
+	static menuMouse &Mouse;
 
 	static void SetMenu(long menu)
 	{
@@ -343,7 +391,7 @@ public:
 		return ((int (__cdecl *)())0x5DACC0)();
 	}
 
-	static int InputMouseBack()
+	static int InputPrintInfoButton1()
 	{
 		return *(int *)0x7C8F9C;
 	}
@@ -351,6 +399,26 @@ public:
 	static int GetMouseOption()
 	{
 		return ((int (__cdecl *)())0x5DAD00)();
+	}
+	
+	static void SetPrintColor(int r, int g, int b, int a)
+	{
+		((void (__cdecl *)(int, int, int, int))0x5D7AA0)(r, g, b, a);
+	}
+	
+	static void SetColorLightGray()
+	{
+		((void (__cdecl *)())0x5D7C70)();
+	}
+	
+	static void SetColorDarkGray()
+	{
+		((void (__cdecl *)())0x5D7D20)();
+	}
+	
+	static void SetColorGray()
+	{
+		((void (__cdecl *)())0x5D7BC0)();
 	}
 
 	static void DrawOptionText(wchar_t *text, float x, float y, float w, float h)

@@ -29,13 +29,15 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 
 		CPatch::RedirectJump(0x493960, CLanguageLoader::UnicodeToAscii);
 		CPatch::RedirectJump(0x4939B0, CLanguageLoader::AsciiNToUnicode);
-		CPatch::RedirectJump(0x5FC000, CLanguageLoader::UnicodeFromAscii);
+		CPatch::RedirectJump(0x5FC000, CLanguageLoader::Str8ToStr16);
 
 		CPatch::SetShort(0x49325B, 0x0777);
 		CPatch::RedirectCall(0x4932C8, patch_LoadGlobal);
 
 		CPatch::RedirectCall(0x4933B3, patch_LoadLevel);
 
+		CPatch::RedirectJump(0x5FFF81, FUNC2PTR(&CFEP_LanguageEx::Ctor));
+		CPatch::RedirectJump(0x5FFFA1, FUNC2PTR(&CFEP_LanguageEx::Dtor));
 		CPatch::RedirectJump(0x5FFFB0, FUNC2PTR(&CFEP_LanguageEx::Update));
 		CPatch::RedirectJump(0x6000F0, FUNC2PTR(&CFEP_LanguageEx::Draw));
 
