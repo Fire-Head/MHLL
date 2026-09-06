@@ -125,7 +125,20 @@ Examples can be found in [Releases section](https://github.com/Fire-Head/MHLL/re
 
 
 # Showcase
-![1](https://user-images.githubusercontent.com/26774830/179380085-f292f22b-72ec-4a68-a492-6377fd77ad5b.png)
-![2](https://user-images.githubusercontent.com/26774830/179380087-fc0fe651-d992-4ffd-a641-a032c6d6003e.png)
-![3](https://user-images.githubusercontent.com/26774830/179380090-5aa8feb1-65a7-44cb-9fd0-b2052932004d.png)
-
+<table>
+    <tr>
+      <th>
+        <img width="800" height="600" alt="image1" src="https://github.com/user-attachments/assets/380c1341-ff7d-43a5-ae01-7c7946ea342d" />
+      </th>
+      <th>
+        <img width="800" height="600" alt="image2" src="https://github.com/user-attachments/assets/8cbc057a-4157-41d2-897c-55bb2e553ed8" />
+      </th>
+    </tr>
+</table>
+<table>
+    <tr>
+      <th>
+        <img width="1280 " height="720" alt="image3" src="https://github.com/user-attachments/assets/30f4ae17-7738-48c7-8112-0e596c4c8b7b" />
+      </th>
+    </tr>
+  </table>
