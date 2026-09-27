@@ -18,6 +18,9 @@ wchar_t (&CUniCodeUtils::ms_strLastConvertedUniCode)[512+1] = *(wchar_t(*)[512+1
 RwTexDictionary *&CFrontend::ms_tex = *(RwTexDictionary **)0x7D366C;
 CFrontend::Font &CFrontend::ms_font = *(CFrontend::Font *)0x7D2B7C;
 
+char (&CFrontend::m_msgStr)[512] = *(char(*)[512])*(int *)(0x7D2E38);
+wchar_t (&CFrontend::m_msgStr_16)[512] = *(wchar_t(*)[512])*(int *)(0x7D3038);
+
 CFrontendMenu::menuLanguageCTRL &CFrontendMenu::ms_menuLanguageCTRL = *(CFrontendMenu::menuLanguageCTRL*)0x7C87B4;
 CFrontendMenu::menuMouse &CFrontendMenu::Mouse = *(CFrontendMenu::menuMouse*)0x7C8F70;
 float &CFrontendMenu::fOptionX = *(float*)0x7C8718;

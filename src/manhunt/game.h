@@ -273,6 +273,8 @@ public:
 
 	static RwTexDictionary *&ms_tex;
 	static Font &ms_font;
+	static char (&m_msgStr)[512];
+	static wchar_t (&m_msgStr_16)[512];
 
 	static bool FontLoadDatas(char *path)
 	{
@@ -292,6 +294,11 @@ public:
 	static void Print8(char *text, float x, float y, float sizex, float sizey, float unk, long font)
 	{
 		((void (__cdecl *)(char *, float, float, float, float, float, long))0x5E55E0)(text, x, y, sizex, sizey, unk, font);
+	}
+	
+	static void Print16_(wchar_t *text, float x, float y, float sizex, float sizey, float unk, long font)
+	{
+		((void (__cdecl *)(wchar_t *, float, float, float, float, float, long))0x5E5980)(text, x, y, sizex, sizey, unk, font);
 	}
 	
 	static float GetTextWidth8(char *text, float sizex, long font)
